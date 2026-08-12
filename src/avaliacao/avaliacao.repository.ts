@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { FirebaseService } from 'src/firebase/firebase.service';
 import { OrdersRepository } from 'src/orders/orders.repository';
 import {
@@ -112,6 +116,10 @@ export class AvaliacaoRepository {
     }
 
     const avaliacaoAtual = snapshot.val() as GerenciaAvaliacao;
+
+    if (avaliacaoAtual.usuarioId !== avaliacao.usuarioId) {
+      throw new ForbiddenException('Você não pode editar esta avaliação.');
+    }
 
     await ref.update({
       nota: avaliacao.nota,

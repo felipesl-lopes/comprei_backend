@@ -112,10 +112,9 @@ export class ProductsRepository {
   }
 
   async createProduct(product: Omit<Product, 'id'>): Promise<string> {
-    const ref = await this.firebaseService
-      .getDatabase()
-      .ref('products')
-      .push(product);
+    const ref = await this.firebaseService.getDatabase().ref('products').push();
+
+    await ref.set(product);
 
     return ref.key as string;
   }
