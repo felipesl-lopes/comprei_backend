@@ -47,7 +47,7 @@ export class ProductsService {
     return products;
   }
 
-  async getProductById(id: string): Promise<Product | null> {
+  async getProductById(id: string): Promise<ProductResponse | null> {
     return this.productsRepository.getProductById(id);
   }
 
@@ -57,12 +57,22 @@ export class ProductsService {
 
   async updateProduct(
     id: string,
-    product: Omit<Product, 'id'>,
+    product: Omit<ProductResponse, 'id'>,
   ): Promise<ProductResponse> {
     return await this.productsRepository.updateProduct(id, product);
   }
 
   async deleteProduct(id: string): Promise<void> {
     await this.productsRepository.deleteProduct(id);
+  }
+
+  async getProductsByIds(ids: string[]): Promise<ProductResponse[]> {
+    const products = await Promise.all(
+      ids.map((id) => this.productsRepository.getProductById(id)),
+    );
+
+    return products.filter(
+      (product): product is ProductResponse => product !== null,
+    );
   }
 }

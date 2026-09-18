@@ -93,7 +93,7 @@ export class ProductsRepository {
     });
   }
 
-  async getProductById(id: string): Promise<Product | null> {
+  async getProductById(id: string): Promise<ProductResponse | null> {
     const snapshot = await this.firebaseService
       .getDatabase()
       .ref(`products/${id}`)
@@ -103,11 +103,13 @@ export class ProductsRepository {
       return null;
     }
 
-    const data = snapshot.val() as Omit<Product, 'id'>;
+    const data = snapshot.val() as Omit<ProductResponse, 'id'>;
 
     return {
       id,
       ...data,
+      notaMedia: Number(data.notaMedia ?? 0.0),
+      totalAvaliacoes: data.totalAvaliacoes ?? 0,
     };
   }
 
@@ -121,18 +123,16 @@ export class ProductsRepository {
 
   async updateProduct(
     id: string,
-    product: Omit<Product, 'id'>,
+    product: Omit<ProductResponse, 'id'>,
   ): Promise<ProductResponse> {
     await this.firebaseService
       .getDatabase()
       .ref(`products/${id}`)
       .update(product);
 
-    const { userId, ...productResponse } = product;
-
     return {
       id,
-      ...productResponse,
+      ...product,
       notaMedia: Number(product.notaMedia ?? 0.0),
       totalAvaliacoes: product.totalAvaliacoes ?? 0,
     };
@@ -163,7 +163,6 @@ export class ProductsRepository {
     const ref = this.firebaseService.getDatabase().ref(`products/${id}`);
 
     const snapshot = await ref.get();
-
     const produto = snapshot.val() as ProductAvaliacao | null;
 
     const totalAtual = produto?.totalAvaliacoes ?? 0;

@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -42,8 +43,17 @@ export class ProductsController {
     return this.productsService.getFavoritesProducts(req.user.uid);
   }
 
+  @Get('researched')
+  async getResearchedProducts(
+    @Query('ids') ids: string,
+  ): Promise<ProductResponse[]> {
+    return this.productsService.getProductsByIds(ids.split(','));
+  }
+
   @Get(':id')
-  async getProductById(@Param('id') id: string): Promise<Product | null> {
+  async getProductById(
+    @Param('id') id: string,
+  ): Promise<ProductResponse | null> {
     return this.productsService.getProductById(id);
   }
 
@@ -68,7 +78,6 @@ export class ProductsController {
   ): Promise<ProductResponse> {
     return await this.productsService.updateProduct(id, {
       ...product,
-      userId: req.user.uid,
     });
   }
 
