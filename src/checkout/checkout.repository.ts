@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { AddressRepository } from 'src/address/address.repository';
 import { CartRepository } from 'src/cart/cart.repository';
-import { Orders } from 'src/orders/oders.interface';
+import { Orders, OrderStatus } from 'src/orders/oders.interface';
 import { OrdersRepository } from 'src/orders/orders.repository';
 import { ProductsRepository } from 'src/products/products.repository';
 
@@ -85,6 +85,7 @@ export class CheckoutRepository {
       date: new Date().toISOString(),
       address: address,
       products,
+      status: OrderStatus.PENDING,
     };
 
     // 5. criar pedido
